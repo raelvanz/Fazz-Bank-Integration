@@ -1,14 +1,14 @@
 import React from 'react'
 import Link from 'next/link'
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from '../Button/Button';
-import { TableProps } from "./Table.types";
-import Pagination from '../Pagination/Pagination';
-import TableBootstraps from 'react-bootstrap/Table';
-import InputField from '../Field/InputField/inputField';
-import Datepicker from '../Field/Datepicker/Datepicker';
-import { BsFillArrowUpSquareFill, BsFillArrowDownSquareFill } from "react-icons/bs";
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Button from '../Button/Button'
+import { TableProps } from "./Table.types"
+import Pagination from '../Pagination/Pagination'
+import TableBootstraps from 'react-bootstrap/Table'
+import InputField from '../Field/InputField/inputField'
+import Datepicker from '../Field/Datepicker/Datepicker'
+import { BsFillArrowUpSquareFill, BsFillArrowDownSquareFill } from "react-icons/bs"
 
 export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
     const [dataTable, setDataTable] = React.useState([{}])
@@ -17,8 +17,8 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
     const [activePage, setActivePage] = React.useState<number>(1)
     const [totalPage, setTotalPage] = React.useState<any>(dataBank)
     const [pageStartNumber, setPageStartNumber] = React.useState<number>(1)
-    const [firstDate, setFirstDate] = React.useState(new Date(0))
-    const [lastDate, setLastDate] = React.useState(new Date(0))
+    const [firstDate, setFirstDate] = React.useState()
+    const [lastDate, setLastDate] = React.useState()
 
     const limitData = async(dataTable: any, page_size: number, page_number: number) => {
         let dataLimit = await dataTable.slice((page_number - 1) * page_size, page_number * page_size)
@@ -26,6 +26,7 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
     }
 
     const handleChangePagination = (page:any, evt:any) => {
+        evt.preventDefault()
         setPageStartNumber(page)
         setActivePage(page)
         gotoPage(page)
@@ -37,61 +38,63 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
     }
 
     const handleChangeSeacrhValue = (evt: any) => {
-        setdataSearch(evt.target.value);
+        setdataSearch(evt.target.value)
     }
 
     const handleChangeSeacrh = async(evt: any) => {
         evt.preventDefault()
         let result: any = []
+        setActivePage(1)
         if(firstDate && lastDate && !dataSearch) {
-            alert('rangefield')
+            // alert('nosearch')
             result = await dataBank.filter((data: any) => {
                 return new Date(data.transactionDate).getTime() <= new Date(lastDate).getTime() && new Date(data.transactionDate).getTime() >= new Date(firstDate).getTime()
-            });
+            })
         } else if(dataSearch && firstDate && lastDate) {
-            alert('here all filed')
+            // alert('allfilled')
             result = await dataBank.filter((data: any) => {
-                return data.description === dataSearch && new Date(data.transactionDate).getTime() <= new Date(lastDate).getTime() && new Date(data.transactionDate).getTime() >= new Date(firstDate).getTime()
-            });
+                return Object.values(data).join('').toLowerCase().includes(dataSearch.toLowerCase()) && new Date(data.transactionDate).getTime() <= new Date(lastDate).getTime() && new Date(data.transactionDate).getTime() >= new Date(firstDate).getTime()
+            })
         } else if(dataSearch && !firstDate && !lastDate) {
-            alert('seacrhfield')
+            // alert('nodate')
             result = await dataBank.filter((data: any) => {
-                return data.description === dataSearch
-            });
+                return Object.values(data).join('').toLowerCase().includes(dataSearch.toLowerCase())
+            })
         }
+        gotoPage(result)
         setTotalPage([...result])
         limitData(result, pageLimit, pageStartNumber)
     }
 
     const handleChangeLastDate = (evt: any) => {
-        setLastDate(evt.target.value);
+        setLastDate(evt.target.value)
     }
 
     const handleChangeFirstDate = (evt: any) => {
-        setFirstDate(evt.target.value);
+        setFirstDate(evt.target.value)
     }
     
     const gotoPage = async(page: any) => {
-        const currentPage = Math.max(0, Math.min(page, dataBank.length));
-        const offset = (currentPage - 1) * pageLimit;
-        const ListBankPage = await dataBank.slice(offset, offset + pageLimit)
+        const currentPage = Math.max(0, Math.min(page, dataBank.length))
+        const offset = (currentPage - 1) * pageLimit
+        const ListBankPage = await totalPage.slice(offset, offset + pageLimit)
         setDataTable([...ListBankPage])
     }
 
     const sortDate = async(paramSort: string) => {
         await dataTable.sort(function(a:any, b:any) {
             if (paramSort == 'down') {
-                return new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime();
+                return new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime()
             } else {
-                return new Date(a.transactionDate).getTime() - new Date(b.transactionDate).getTime();
+                return new Date(a.transactionDate).getTime() - new Date(b.transactionDate).getTime()
             }
-        });
+        })
         setDataTable([...dataTable])
     }
 
     React.useEffect(() => {
         limitData(dataBank, pageLimit, pageStartNumber) 
-    }, []);
+    }, [])
 
     return (
         <React.Fragment>  
@@ -103,7 +106,7 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
                     <Datepicker name={'lastDate'} label={'Last Date'} handleChangeDatePicker={handleChangeLastDate} />
                 </Col>
                 <Col>
-                    <InputField name={'search'} label={'Search By Name'} handleChangeField={handleChangeSeacrhValue}/>
+                    <InputField name={'search'} label={'Search By Description'} handleChangeField={handleChangeSeacrhValue}/>
                 </Col>
                 <Col className='position-relative'>
                     <div className='position-absolute bottom-0'>
@@ -163,7 +166,7 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
                 </Col>
             </Row>
         </React.Fragment>
-    );
-};
+    )
+}
 
-export default Table;
+export default Table

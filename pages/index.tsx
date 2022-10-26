@@ -1,8 +1,8 @@
 import type { NextPage } from 'next'
-import Table from '../src/component/Table/Table';
+import Table from '../src/component/Table/Table'
 
 const Home: NextPage = (props: any) => {
-  const dataBank = props;
+  const dataBank = props
   return (
     <div className='container py-4'>
       <h1>{dataBank.metaData[0].title}</h1>
@@ -13,13 +13,13 @@ const Home: NextPage = (props: any) => {
   )
 }
 
-import fsPromises from 'fs/promises';
+import fsPromises from 'fs/promises'
 import path from 'path'
 export async function getStaticProps() {
   try {
-    const filePath = path.join(process.cwd(), `${process.env.NEXT_PUBLIC_API_FAZZBANK}`);
-    const jsonData = await fsPromises.readFile(filePath);
-    const objectData = JSON.parse(jsonData.toString());
+    const filePath = path.join(process.cwd(), `${process.env.NEXT_PUBLIC_API_FAZZBANK}`)
+    const jsonData = await fsPromises.readFile(filePath)
+    const objectData = JSON.parse(jsonData.toString())
     return {
       props: objectData
     }

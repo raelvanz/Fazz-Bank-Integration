@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import React from 'react'
 import type { NextPage } from 'next'
-import { useRouter } from 'next/router';
-import Card from 'react-bootstrap/Card';
+import { useRouter } from 'next/router'
+import Card from 'react-bootstrap/Card'
 
 const Detail: NextPage = (props: any) => {
-    const router = useRouter();
-    const dataBank = props;
-    const detailId = router.query.detailId;
+    const router = useRouter()
+    const dataBank = props
+    const detailId = router.query.detailId
     
     return (
         <div className='container py-4'>
@@ -49,13 +49,13 @@ const Detail: NextPage = (props: any) => {
   )
 }
 
-import fsPromises from 'fs/promises';
+import fsPromises from 'fs/promises'
 import path from 'path'
 export async function getServerSideProps() {
     try {
-        const filePath = path.join(process.cwd(), `${process.env.NEXT_PUBLIC_API_FAZZBANK}`);
-        const jsonData = await fsPromises.readFile(filePath);
-        const objectData = JSON.parse(jsonData.toString());
+        const filePath = path.join(process.cwd(), `${process.env.NEXT_PUBLIC_API_FAZZBANK}`)
+        const jsonData = await fsPromises.readFile(filePath)
+        const objectData = JSON.parse(jsonData.toString())
         return {
           props: objectData
         }
