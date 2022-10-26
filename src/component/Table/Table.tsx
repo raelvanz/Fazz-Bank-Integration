@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from '../Button/Button'
+import Card from 'react-bootstrap/Card';
 import { TableProps } from "./Table.types"
 import Pagination from '../Pagination/Pagination'
 import TableBootstraps from 'react-bootstrap/Table'
@@ -46,17 +47,14 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
         let result: any = []
         setActivePage(1)
         if(firstDate && lastDate && !dataSearch) {
-            // alert('nosearch')
             result = await dataBank.filter((data: any) => {
                 return new Date(data.transactionDate).getTime() <= new Date(lastDate).getTime() && new Date(data.transactionDate).getTime() >= new Date(firstDate).getTime()
             })
         } else if(dataSearch && firstDate && lastDate) {
-            // alert('allfilled')
             result = await dataBank.filter((data: any) => {
                 return Object.values(data).join('').toLowerCase().includes(dataSearch.toLowerCase()) && new Date(data.transactionDate).getTime() <= new Date(lastDate).getTime() && new Date(data.transactionDate).getTime() >= new Date(firstDate).getTime()
             })
         } else if(dataSearch && !firstDate && !lastDate) {
-            // alert('nodate')
             result = await dataBank.filter((data: any) => {
                 return Object.values(data).join('').toLowerCase().includes(dataSearch.toLowerCase())
             })
@@ -98,35 +96,39 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
 
     return (
         <React.Fragment>  
-            <Row className='mb-3'>
-                <Col>
-                    <Datepicker name={'firtsDate'} label={'First Date'} handleChangeDatePicker={handleChangeFirstDate} />
-                </Col>
-                <Col>
-                    <Datepicker name={'lastDate'} label={'Last Date'} handleChangeDatePicker={handleChangeLastDate} />
-                </Col>
-                <Col>
-                    <InputField name={'search'} label={'Search By Description'} handleChangeField={handleChangeSeacrhValue}/>
-                </Col>
-                <Col className='position-relative'>
-                    <div className='position-absolute bottom-0'>
-                        <Button name={'Process'} typeButton={'success'} handleChangeProcess={handleChangeSeacrh}/>
-                    </div>
-                </Col>
-            </Row>
+            <Card className='mb-3'>
+                <Card.Body>
+                    <Row>
+                        <Col>
+                            <Datepicker name={'firtsDate'} label={'First Date'} handleChangeDatePicker={handleChangeFirstDate} />
+                        </Col>
+                        <Col>
+                            <Datepicker name={'lastDate'} label={'Last Date'} handleChangeDatePicker={handleChangeLastDate} />
+                        </Col>
+                        <Col>
+                            <InputField name={'search'} label={'Search By Description'} handleChangeField={handleChangeSeacrhValue}/>
+                        </Col>
+                        <Col className='position-relative'>
+                            <div className='position-absolute bottom-0'>
+                                <Button name={'Process'} typeButton={'success'} handleChangeProcess={handleChangeSeacrh}/>
+                            </div>
+                        </Col>
+                    </Row>
+                </Card.Body>
+            </Card>
             <TableBootstraps striped bordered hover>
                 <thead>
                     <tr>
                         <th>
-                            Transaction Date 
+                            <b>Transaction Date</b> 
                             <a className='float-end mx-1' onClick={() => sortDate('up')}><BsFillArrowUpSquareFill /></a> 
                             <a className='float-end mx-1' onClick={() => sortDate('down')}><BsFillArrowDownSquareFill/></a>
                         </th>
-                        <th>Description</th>
-                        <th>Category</th>
-                        <th>Credit</th>
-                        <th>Debit</th>
-                        <th></th>
+                        <th><b>Description</b></th>
+                        <th><b>Category</b></th>
+                        <th><b>Credit</b></th>
+                        <th><b>Debit</b></th>
+                        <th><b></b></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -134,14 +136,14 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
                         dataTable.map((item: any, index: any) => {
                             return (
                                 <tr key={index}>
-                                    <td>{item.transactionDate}</td>
-                                    <td>{item.description}</td>
-                                    <td>{item.category}</td>
-                                    <td>{item.credit ? item.credit : '-'}</td>
-                                    <td>{item.debit ? item.debit : '-'}</td>
-                                    <td className='text-center'>
+                                    <td className="align-middle">{item.transactionDate}</td>
+                                    <td className="align-middle">{item.description}</td>
+                                    <td className="align-middle">{item.category}</td>
+                                    <td className="align-middle">{item.credit ? item.credit : '-'}</td>
+                                    <td className="align-middle">{item.debit ? item.debit : '-'}</td>
+                                    <td className='align-middle text-center'>
                                         <Link href={`/detail/${item.id}`}>
-                                            <a>Detail</a>
+                                            <a className="btn btn-success">Detail</a>
                                         </Link>
                                     </td>
                                 </tr>

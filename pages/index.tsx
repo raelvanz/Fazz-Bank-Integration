@@ -5,7 +5,7 @@ const Home: NextPage = (props: any) => {
   const dataBank = props
   return (
     <div className='container py-4'>
-      <h1>{dataBank.metaData[0].title}</h1>
+      <h2 className="grad-prim"><b>{dataBank.metaData[0].title}</b></h2>
       <h3>{dataBank.metaData[0].desc}</h3>
       <p>{dataBank.metaData[0].longDesc}</p>
       <Table dataBank={dataBank.accounts}/>

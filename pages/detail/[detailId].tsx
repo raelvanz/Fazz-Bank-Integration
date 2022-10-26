@@ -1,8 +1,10 @@
-import Link from 'next/link'
 import React from 'react'
+import Link from 'next/link'
 import type { NextPage } from 'next'
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { useRouter } from 'next/router'
-import Card from 'react-bootstrap/Card'
+import Card from 'react-bootstrap/Card';
 
 const Detail: NextPage = (props: any) => {
     const router = useRouter()
@@ -11,7 +13,7 @@ const Detail: NextPage = (props: any) => {
     
     return (
         <div className='container py-4'>
-        <h1 className="mb-3">Detail {dataBank.metaData[0].title}</h1>
+        <h2 className="mb-3 grad-prim"><b>Detail {dataBank.metaData[0].title}</b></h2>
         {dataBank.accounts.map((data: any, index: any) => {
             return (
                 <React.Fragment key={index}>
@@ -19,22 +21,32 @@ const Detail: NextPage = (props: any) => {
                         {
                             data.id == detailId ? (
                                 <React.Fragment>
-                                    <h5>{data.description}</h5>
-                                    <p className="my-1">
-                                        Category : {data.category}
-                                    </p>
-                                    <p className="my-1">
-                                        Debit : {data.debit ? data.debit : '-'}
-                                    </p>
-                                    <p className="my-1">
-                                        Credit : {data.credit ? data.credit : '-'}
-                                    </p>
-                                    <p className="my-1">
-                                        Date : {data.transactionDate}
-                                    </p>
+                                    <Card >
+                                        <Card.Header>{data.description}</Card.Header>
+                                        <Card.Body>
+                                            <Col xs lg="4">
+                                                <Row>
+                                                    <Col><b>Category</b></Col>
+                                                    <Col>&nbsp; : &nbsp; {data.category}</Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col><b>Debit</b></Col>
+                                                    <Col>&nbsp; : &nbsp; {data.debit ? data.debit : '-'}</Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col><b>Credit</b></Col>
+                                                    <Col>&nbsp; : &nbsp; {data.credit ? data.credit : '-'}</Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col><b>Date</b></Col>
+                                                    <Col>&nbsp; : &nbsp; {data.transactionDate}</Col>
+                                                </Row>
+                                            </Col>
+                                        </Card.Body>
+                                    </Card>
                                     <br />
                                     <Link href={`/`}>
-                                        <a>Back To Homepage</a>
+                                        <a className='btn btn-light'>Back To Homepage</a>
                                     </Link>
                                 </React.Fragment>
                             ) : (
