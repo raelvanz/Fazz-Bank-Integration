@@ -16,12 +16,17 @@ const Home: NextPage = (props: any) => {
 import fsPromises from 'fs/promises';
 import path from 'path'
 export async function getStaticProps() {
-  const filePath = path.join(process.cwd(), 'json/bank.json');
-  const jsonData = await fsPromises.readFile(filePath);
-  const objectData = JSON.parse(jsonData.toString());
-
-  return {
-    props: objectData
+  try {
+    const filePath = path.join(process.cwd(), `${process.env.NEXT_PUBLIC_API_FAZZBANK}`);
+    const jsonData = await fsPromises.readFile(filePath);
+    const objectData = JSON.parse(jsonData.toString());
+    return {
+      props: objectData
+    }
+  } catch (error) {
+    return {
+      notFound: true
+    }
   }
 }
 

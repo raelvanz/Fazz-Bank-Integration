@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import React,{FC} from 'react'
+import React from 'react'
 import Tab from 'react-bootstrap/Tab';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';

@@ -1,4 +1,4 @@
-import React,{FC} from 'react'
+import React from 'react'
 import {ButtonProps} from "./Button.types"
 import ButtonBootstraps from 'react-bootstrap/Button';
 

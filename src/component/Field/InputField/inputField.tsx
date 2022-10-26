@@ -1,4 +1,4 @@
-import React,{FC} from 'react'
+import React from 'react'
 import Form from 'react-bootstrap/Form';
 import { InputFieldProps } from "./InputField.type"
 
