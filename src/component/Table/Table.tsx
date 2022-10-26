@@ -1,20 +1,16 @@
-import Link from 'next/link'
 import React from 'react'
-import Tab from 'react-bootstrap/Tab';
+import Link from 'next/link'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from '../Button/Button';
-import Tabs from 'react-bootstrap/Tabs';
-import Alert from 'react-bootstrap/Alert';
-import { TableProps } from "./Table.types"
+import { TableProps } from "./Table.types";
 import Pagination from '../Pagination/Pagination';
 import TableBootstraps from 'react-bootstrap/Table';
-import Datepicker from '../Field/Datepicker/Datepicker';
 import InputField from '../Field/InputField/inputField';
+import Datepicker from '../Field/Datepicker/Datepicker';
 import { BsFillArrowUpSquareFill, BsFillArrowDownSquareFill } from "react-icons/bs";
 
 export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
-    const [show, setShow] = React.useState(true)
     const [dataTable, setDataTable] = React.useState([{}])
     const [dataSearch, setdataSearch] = React.useState<any>('')
     const [pageLimit, setPageLimit] = React.useState<number>(10)
@@ -35,22 +31,8 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
         gotoPage(page)
     }
 
-    const handleChangeFilterRange = async(evt: any) => {
-        evt.preventDefault()
-        let datesCollection: any = []
-        await dataBank.map((item: any) => {
-            if (new Date(item.transactionDate).getTime() <= new Date(lastDate).getTime() && new Date(item.transactionDate).getTime() >= new Date(firstDate).getTime()) {
-                datesCollection.push(item)
-            }
-        })
-        setShow(false)
-        setTotalPage([...datesCollection])
-        setDataTable([...datesCollection])
-    }
-
     const resetPage = (evt: any) => {
         evt.preventDefault()
-        setShow(true)
         limitData(dataBank, pageLimit, pageStartNumber) 
     }
 
@@ -60,11 +42,25 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
 
     const handleChangeSeacrh = async(evt: any) => {
         evt.preventDefault()
-        const result = await dataBank.filter((data: any) => {
-            return data.description === dataSearch
-        });
-        setShow(false)
-        setDataTable([...result])
+        let result: any = []
+        if(firstDate && lastDate && !dataSearch) {
+            alert('rangefield')
+            result = await dataBank.filter((data: any) => {
+                return new Date(data.transactionDate).getTime() <= new Date(lastDate).getTime() && new Date(data.transactionDate).getTime() >= new Date(firstDate).getTime()
+            });
+        } else if(dataSearch && firstDate && lastDate) {
+            alert('here all filed')
+            result = await dataBank.filter((data: any) => {
+                return data.description === dataSearch && new Date(data.transactionDate).getTime() <= new Date(lastDate).getTime() && new Date(data.transactionDate).getTime() >= new Date(firstDate).getTime()
+            });
+        } else if(dataSearch && !firstDate && !lastDate) {
+            alert('seacrhfield')
+            result = await dataBank.filter((data: any) => {
+                return data.description === dataSearch
+            });
+        }
+        setTotalPage([...result])
+        limitData(result, pageLimit, pageStartNumber)
     }
 
     const handleChangeLastDate = (evt: any) => {
@@ -99,49 +95,22 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
 
     return (
         <React.Fragment>  
-            <Tabs
-                defaultActiveKey="byName"
-                id="uncontrolled-tab-example"
-                className="mb-3"
-            >
-                <Tab eventKey="byName" title="Search By Name">
-                    <Row className='mb-3'>
-                        <Col>
-                            <InputField name={'search'} label={'Search By Name'} handleChangeField={handleChangeSeacrhValue}/>
-                        </Col>
-                        <Col className='position-relative'>
-                            <div className='position-absolute bottom-0'>
-                                <Button name={'Process'} typeButton={'success'} handleChangeProcess={handleChangeSeacrh}/>
-                            </div>
-                        </Col>
-                        <Col className='position-relative'>
-                            <div className='position-absolute bottom-0 end-0'>
-                                <Button name={'Reset'} typeButton={'warning'} handleChangeProcess={resetPage}/>
-                            </div>
-                        </Col>
-                    </Row>
-                </Tab>
-                <Tab eventKey="byRange" title="Search By Range">
-                    <Row className='mb-3'>
-                        <Col>
-                            <Datepicker name={'firtsDate'} label={'First Date'} handleChangeDatePicker={handleChangeFirstDate} />
-                        </Col>
-                        <Col>
-                            <Datepicker name={'lastDate'} label={'Last Date'} handleChangeDatePicker={handleChangeLastDate} />
-                        </Col>
-                        <Col className='position-relative'>
-                            <div className='position-absolute bottom-0'>
-                                <Button name={'Process'} typeButton={'success'} handleChangeProcess={handleChangeFilterRange}/>
-                            </div>
-                        </Col>
-                        <Col className='position-relative'>
-                            <div className='position-absolute bottom-0 end-0'>
-                                <Button name={'Reset'} typeButton={'warning'} handleChangeProcess={resetPage}/>
-                            </div>
-                        </Col>
-                    </Row>
-                </Tab>
-            </Tabs>
+            <Row className='mb-3'>
+                <Col>
+                    <Datepicker name={'firtsDate'} label={'First Date'} handleChangeDatePicker={handleChangeFirstDate} />
+                </Col>
+                <Col>
+                    <Datepicker name={'lastDate'} label={'Last Date'} handleChangeDatePicker={handleChangeLastDate} />
+                </Col>
+                <Col>
+                    <InputField name={'search'} label={'Search By Name'} handleChangeField={handleChangeSeacrhValue}/>
+                </Col>
+                <Col className='position-relative'>
+                    <div className='position-absolute bottom-0'>
+                        <Button name={'Process'} typeButton={'success'} handleChangeProcess={handleChangeSeacrh}/>
+                    </div>
+                </Col>
+            </Row>
             <TableBootstraps striped bordered hover>
                 <thead>
                     <tr>
@@ -185,19 +154,14 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
                 </tbody>
             </TableBootstraps>
             <br />
-            { show ? (
-                <Row>
-                    <Col className='flex align-items-center'>
-                        Page  {activePage} TotalPage : {totalPage.length}
-                    </Col>
-                    <Col>
-                        <Pagination handleChangePagination={handleChangePagination} dataBank={totalPage} limitPage={10} activePage={activePage} startPage={pageStartNumber} />
-                    </Col>
-                </Row>
-            ) : (
-                <React.Fragment></React.Fragment>
-            )
-            }
+            <Row>
+                <Col className='flex align-items-center'>
+                    Page  {activePage}
+                </Col>
+                <Col>
+                    <Pagination handleChangePagination={handleChangePagination} dataBank={totalPage} limitPage={10} activePage={activePage} startPage={pageStartNumber} />
+                </Col>
+            </Row>
         </React.Fragment>
     );
 };

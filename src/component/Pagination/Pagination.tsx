@@ -74,7 +74,8 @@ export const Pagination: React.FC<PaginateProps> = ({dataBank, limitPage, startP
 
     React.useEffect(() => {
         limitData(dataBank, limitPage)
-    }, []);
+        fetchPageNumbers()
+    }, [limitData]);
 
     return (
         <React.Fragment>
