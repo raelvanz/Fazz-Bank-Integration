@@ -33,13 +33,15 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
         gotoPage(page)
     }
 
-    const resetPage = (evt: any) => {
-        evt.preventDefault()
-        limitData(dataBank, pageLimit, pageStartNumber) 
-    }
-
+    
     const handleChangeSeacrhValue = (evt: any) => {
         setdataSearch(evt.target.value)
+    }
+    
+    const handleReset = (evt: any) => {
+        evt.preventDefault()
+        limitData(dataBank, pageLimit, pageStartNumber)
+        setTotalPage(dataBank)
     }
 
     const handleChangeSeacrh = async(evt: any) => {
@@ -98,69 +100,86 @@ export const Table: React.FC<TableProps> = ({dataBank}: TableProps) => {
         <React.Fragment>  
             <Card className='mb-3'>
                 <Card.Body>
-                    <Row>
-                        <Col>
-                            <Datepicker name={'firtsDate'} label={'First Date'} handleChangeDatePicker={handleChangeFirstDate} />
-                        </Col>
-                        <Col>
-                            <Datepicker name={'lastDate'} label={'Last Date'} handleChangeDatePicker={handleChangeLastDate} />
-                        </Col>
-                        <Col>
-                            <InputField name={'search'} label={'Search By Description'} handleChangeField={handleChangeSeacrhValue}/>
-                        </Col>
-                        <Col className='position-relative'>
-                            <div className='position-absolute bottom-0'>
-                                <Button name={'Process'} typeButton={'success'} handleChangeProcess={handleChangeSeacrh}/>
-                            </div>
-                        </Col>
-                    </Row>
+                    <Col lg='12'>
+                        <Row>
+                            <Col lg='3' className='mb-3 mb-lg-0'>
+                                <Datepicker name={'firtsDate'} label={'First Date'} handleChangeDatePicker={handleChangeFirstDate} />
+                            </Col>
+                            <Col lg='3' className='mb-3 mb-lg-0'>
+                                <Datepicker name={'lastDate'} label={'Last Date'} handleChangeDatePicker={handleChangeLastDate} />
+                            </Col>
+                            <Col lg='3' className='mb-3 mb-lg-0'>
+                                <InputField name={'search'} label={'Search By Description'} handleChangeField={handleChangeSeacrhValue}/>
+                            </Col>
+                            <Col lg='3' className='d-flex align-items-end'>
+                                <Row className='w-100'>
+                                    <Col lg='12'>
+                                        <Row>
+                                            <Col lg='6'>
+                                                <div className='d-grid gap-2 mb-3 mb-lg-0'> 
+                                                    <Button name={'Process'} typeButton={'success'} handleChangeProcess={handleChangeSeacrh}/>
+                                                </div>
+                                            </Col>
+                                            <Col lg='6'>
+                                                <div className='d-grid gap-2 mb-3 mb-lg-0'> 
+                                                    <Button name={'Reset'} typeButton={'warning'} handleChangeProcess={handleReset}/>
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                    </Col>
                 </Card.Body>
             </Card>
-            <TableBootstraps striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>
-                            <b>Transaction Date</b> 
-                            <a className='float-end mx-1' onClick={() => sortDate('up')}><BsFillArrowUpSquareFill /></a> 
-                            <a className='float-end mx-1' onClick={() => sortDate('down')}><BsFillArrowDownSquareFill/></a>
-                        </th>
-                        <th><b>Description</b></th>
-                        <th><b>Category</b></th>
-                        <th><b>Credit</b></th>
-                        <th><b>Debit</b></th>
-                        <th><b></b></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {dataTable.length ? (
-                        dataTable.map((item: any, index: any) => {
-                            return (
-                                <tr key={index}>
-                                    <td className="align-middle">{item.transactionDate}</td>
-                                    <td className="align-middle">{item.description}</td>
-                                    <td className="align-middle">{item.category}</td>
-                                    <td className="align-middle">{item.credit ? item.credit : '-'}</td>
-                                    <td className="align-middle">{item.debit ? item.debit : '-'}</td>
-                                    <td className='align-middle text-center'>
-                                        <Link href={`/detail/${item.id}`}>
-                                            <a className="btn btn-success">Detail</a>
-                                        </Link>
-                                    </td>
-                                </tr>
-                            )
-                        })
-                    ) : (
+            <div className='overflow-auto'>
+                <TableBootstraps striped bordered hover>
+                    <thead>
                         <tr>
-                            <td colSpan={6} className="text-center">
-                                Sorry data not found
-                            </td>
+                            <th>
+                                <b>Transaction Date</b> 
+                                <a className='float-end mx-1' onClick={() => sortDate('up')}><BsFillArrowUpSquareFill /></a> 
+                                <a className='float-end mx-1' onClick={() => sortDate('down')}><BsFillArrowDownSquareFill/></a>
+                            </th>
+                            <th><b>Description</b></th>
+                            <th><b>Category</b></th>
+                            <th><b>Credit</b></th>
+                            <th><b>Debit</b></th>
+                            <th><b></b></th>
                         </tr>
-                    )}
-                </tbody>
-            </TableBootstraps>
+                    </thead>
+                    <tbody>
+                        {dataTable.length ? (
+                            dataTable.map((item: any, index: any) => {
+                                return (
+                                    <tr key={index}>
+                                        <td className="align-middle">{item.transactionDate}</td>
+                                        <td className="align-middle">{item.description}</td>
+                                        <td className="align-middle">{item.category}</td>
+                                        <td className="align-middle">{item.credit ? item.credit : '-'}</td>
+                                        <td className="align-middle">{item.debit ? item.debit : '-'}</td>
+                                        <td className='align-middle text-center'>
+                                            <Link href={`/detail/${item.id}`}>
+                                                <a className="btn btn-success">Detail</a>
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                )
+                            })
+                        ) : (
+                            <tr>
+                                <td colSpan={6} className="text-center">
+                                    Sorry data not found
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </TableBootstraps>
+            </div>
             <br />
             <Row>
-                <Col className='flex align-items-center'>
+                <Col className='d-flex align-items-center'>
                     Page  {activePage}
                 </Col>
                 <Col>
